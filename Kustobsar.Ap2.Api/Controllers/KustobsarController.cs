@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+    using System.Diagnostics;
     using System.Linq;
     using System.Net;
     using System.Web.Mvc;
@@ -89,6 +90,8 @@
             {
                 if (sightings != null && sightings.Count > 0)
                 {
+                    Trace.TraceInformation("Trace test (Sightings)");
+
                     var storeDays = this.StoreDays;
                     Log.InfoFormat("RemoveOld: {0} days", storeDays);
                     this.sightingService.RemoveOldSightings(storeDays);
