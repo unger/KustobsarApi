@@ -7,21 +7,21 @@
 
     using Artportalen.Response;
 
+    using Common.Logging;
+
     using Kustobsar.Ap2.Data;
     using Kustobsar.Ap2.Data.Model;
 
     using NHibernate.Linq;
 
-    using NLog;
-
     using SafeMapper;
 
     public class SightingsService
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILog Log = LogManager.GetLogger<SightingsService>();
 
         private PropertyInfo[] sightingProperties;
-
+        
         private PropertyInfo[] SightingProperties
         {
             get
@@ -41,8 +41,7 @@
             var nextDate = date.AddDays(1);
             using (var session = NHibernateConfiguration.GetSession())
             {
-                return session.Query<SightingDto>()
-                    .Where(x => x.StartDate >= date && x.EndDate < nextDate).ToArray();
+                return session.Query<SightingDto>().Where(x => x.StartDate >= date && x.EndDate < nextDate).ToArray();
             }
         }
 
@@ -66,8 +65,6 @@
             var taxonDtos = new Dictionary<int, TaxonDto>();
             var sightingDtos = new List<SightingDto>();
 
-            this.RemoveOldSightings();
-
             foreach (var sighting in sightings)
             {
                 if (sighting.SightingObservers != null)
@@ -83,7 +80,10 @@
 
                 if (taxonDto.TaxonId == 0)
                 {
-                    taxonDto.TaxonId = this.FindTaxonIdByName(taxonDto.ScientificName, taxonDto.CommonName, taxonDto.EnglishName);
+                    taxonDto.TaxonId = this.FindTaxonIdByName(
+                        taxonDto.ScientificName,
+                        taxonDto.CommonName,
+                        taxonDto.EnglishName);
                 }
 
                 // Taxons
@@ -211,11 +211,29 @@
             }
         }
 
+        public void RemoveOldSightings(int days)
+        {
+            if (days > 0)
+            {
+                using (var session = NHibernateConfiguration.GetSession())
+                {
+                    session.CreateQuery("delete from SightingDto d where d.StartDate < :startDate")
+                        .SetDateTime("startDate", DateTime.Today.AddDays(-days))
+                        .ExecuteUpdate();
+                }
+            }
+        }
+
         private int FindTaxonIdByName(string scientificName, string commonName, string englishName)
         {
             using (var session = NHibernateConfiguration.GetSession())
             {
-                var result = session.Query<TaxonInfo>().FirstOrDefault(x => x.ScientificName == scientificName || x.CommonName == commonName || x.EnglishName == englishName);
+                var result =
+                    session.Query<TaxonInfo>()
+                        .FirstOrDefault(
+                            x =>
+                            x.ScientificName == scientificName || x.CommonName == commonName
+                            || x.EnglishName == englishName);
 
                 if (result != null)
                 {
@@ -235,18 +253,14 @@
                 {
                     if (value.Length > 255 && prop.Name != "PublicComment")
                     {
-                        logger.Error("SightingId: {0} String value will be truncated property: {1} value: '{2}'", sighting.SightingId, prop.Name, value.Length);
+                        Log.ErrorFormat(
+                            "SightingId: {0} String value will be truncated property: {1} value: '{2}'",
+                            sighting.SightingId,
+                            prop.Name,
+                            value.Length);
                         prop.SetValue(sighting, value.Substring(0, 254));
                     }
                 }
-            }
-        }
-
-        private void RemoveOldSightings()
-        {
-            using (var session = NHibernateConfiguration.GetSession())
-            {
-                session.CreateQuery("delete from SightingDto d where d.StartDate < :startDate").SetDateTime("startDate", DateTime.Today.AddDays(-3)).ExecuteUpdate();
             }
         }
     }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Configuration;
     using System.Linq;
     using System.Net;
     using System.Web.Mvc;
@@ -9,12 +10,16 @@
     using Artportalen.Helpers;
     using Artportalen.Response;
 
+    using Common.Logging;
+
     using Kustobsar.Ap2.Api.Logic;
     using Kustobsar.Ap2.Api.Models;
     using Kustobsar.Ap2.Data.Services;
 
     public class KustobsarController : Controller
     {
+        private static readonly ILog Log = LogManager.GetLogger<KustobsarController>();
+
         private readonly SightingsService sightingService;
 
         private readonly KustobsarSightingFactory kustobsarSightingsFactory;
@@ -30,8 +35,23 @@
             this.kustobsarSightingsFactory = kustobsarSightingsFactory;
         }
 
+        private int StoreDays
+        {
+            get
+            {
+                int storeDays;
+                if (!int.TryParse(ConfigurationManager.AppSettings["SightingsStoredDays"], out storeDays))
+                {
+                    storeDays = 3;
+                }
+
+                return storeDays;
+            }
+        }
+
         public ActionResult Index(string datum, string rrksort, string rrkkod, string sort, string sortorder)
         {
+            Log.InfoFormat("Index: {0}", datum);
             DateTime date;
             if (!DateTime.TryParse(datum, out date))
             {
@@ -55,23 +75,35 @@
 
         public ActionResult TestRemove()
         {
-            this.sightingService.StoreSightings(new Sighting[0]);
+            Log.Info("TestRemove");
+
+            this.sightingService.RemoveOldSightings(this.StoreDays);
 
             return new ContentResult { Content = "test" };
         }
 
         [HttpPost]
-        public ActionResult Sightings(IEnumerable<Sighting> sightings)
+        public ActionResult Sightings(IList<Sighting> sightings)
         {
             try
             {
-                if (sightings != null)
+                if (sightings != null && sightings.Count > 0)
                 {
+                    var storeDays = this.StoreDays;
+                    Log.InfoFormat("RemoveOld: {0} days", storeDays);
+                    this.sightingService.RemoveOldSightings(storeDays);
+
+                    Log.InfoFormat("Sightings: {0}", sightings.Count);
                     this.sightingService.StoreSightings(sightings);
+                }
+                else
+                {
+                    Log.Info("No sightings recieved");
                 }
             }
             catch (Exception e)
             {
+                Log.Error("Store sightings", e);
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, e.Message);
             }
 
