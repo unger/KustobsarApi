@@ -6,6 +6,8 @@
 
         public int TaxonId { get; set; }
 
+        public bool Unsure { get; set; }
+
         public string CommonName { get; set; }
 
         public string ScientificName { get; set; }

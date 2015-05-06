@@ -10,7 +10,7 @@
     <svensktnamn>@sighting.CommonName</svensktnamn>
     <engelsktnamn>@sighting.EnglishName</engelsktnamn>
     <vetnamn>@sighting.ScientificName</vetnamn>
-    <unsure></unsure>
+    <unsure>@(sighting.Unsure ? "?" : "")</unsure>
     <attribut>@sighting.Attribute</attribut>
     <antal>@sighting.Quantity</antal>
     <lokal>@sighting.Site</lokal>

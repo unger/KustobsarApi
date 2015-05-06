@@ -36,6 +36,7 @@
                                        PublicComment = sighting.PublicComment,
                                        ReportTemplate = string.Empty,
                                        HasMedia = string.Empty,
+                                       Unsure = sighting.UnsureDetermination,
                                    };
 
             if (sighting.Taxon != null)
