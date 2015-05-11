@@ -3,13 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{FEB2EFE3-0582-4C14-9ECB-4FF02E1D61C0}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kustobsar.Ap2.Api", "Kustobsar.Ap2.Api\Kustobsar.Ap2.Api.csproj", "{D0BF50F3-2F3D-420B-95CE-5B25AFFBAA9A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kustobsar.Ap2.Api.Tests", "Kustobsar.Ap2.Api.Tests\Kustobsar.Ap2.Api.Tests.csproj", "{0563A18B-6B30-4ACD-9965-44E90A91DB79}"
