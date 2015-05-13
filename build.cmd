@@ -1,10 +1,16 @@
 @echo Off
 
-
 set solutionName=KustobsarApi.sln
-set config=Release
-set buildDir=Build
+set MSBuildExe="C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild.exe"
+
+set config=%1
+if "%config%" == "" (
+	set config=Release
+)
+
+set buildDir=Build\%config%
 
 
 nuget restore
-C:\Windows\Microsoft.Net\Framework64\v4.0.30319\msbuild.exe %solutionName% /p:Configuration=%config% /p:OutDir=%cd%\%buildDir% /p:UseWPP_CopyWebApplication=True /p:PipelineDependsOnBuild=False
+%MSBuildExe% %solutionName% /t:Rebuild /p:Configuration=%config%;OutDir="%cd%\%buildDir%";UseWPP_CopyWebApplication=True;PipelineDependsOnBuild=False
+
