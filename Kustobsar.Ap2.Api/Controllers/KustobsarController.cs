@@ -106,7 +106,9 @@
             }
             catch (Exception e)
             {
-                Log.Error("Store sightings", e);
+                Trace.TraceError("Trace: Store sightings: " + e.Message);
+                Console.WriteLine("Console: Store sightings: " + e.Message);
+                Log.Error("Logger: Store sightings", e);
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, e.Message);
             }
 
