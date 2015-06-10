@@ -27,7 +27,7 @@
     <kommentar>@sighting.PublicComment</kommentar>
     <obsid>@sighting.SightingId</obsid>
     <obsida></obsida>
-    <hasmedia>@sighting.HasMedia</hasmedia>
+    <hasmedia>@(sighting.HasMedia != null ? "1" : "")</hasmedia>
     <fyndtyp>3</fyndtyp>
     <regionalstatus>@sighting.RegionalStatus</regionalstatus>
     <rapportmall>@sighting.ReportTemplate</rapportmall>
