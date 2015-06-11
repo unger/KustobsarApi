@@ -35,7 +35,7 @@
                                        SightingObservers = sighting.SightingObservers,
                                        PublicComment = sighting.PublicComment,
                                        ReportTemplate = string.Empty,
-                                       HasMedia = string.Empty,
+                                       HasMedia = string.IsNullOrEmpty(sighting.HasMedia) ? string.Empty : "1",
                                        Unsure = sighting.UnsureDetermination,
                                    };
 

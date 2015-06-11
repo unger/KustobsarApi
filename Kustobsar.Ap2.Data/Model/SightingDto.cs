@@ -42,6 +42,8 @@
 
         public virtual DateTime? Updated { get; set; }
 
+        public virtual string HasMedia { get; set; }
+
         public virtual string Source { get; set; }
     }
 }
