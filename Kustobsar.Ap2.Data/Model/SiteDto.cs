@@ -27,5 +27,7 @@
         public virtual DateTime? Updated { get; set; }
 
         public virtual int? UseCount { get; set; }
+
+        public virtual string ParseId { get; set; }
     }
 }

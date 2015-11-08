@@ -1,4 +1,6 @@
-﻿namespace Kustobsar.Ap2.Api.Controllers
+﻿using Kustobsar.Ap2.Data.ParseData.Storage;
+
+namespace Kustobsar.Ap2.Api.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -26,7 +28,7 @@
         private readonly KustobsarSightingFactory kustobsarSightingsFactory;
 
         public KustobsarController()
-            : this(new SightingsService(), new KustobsarSightingFactory(new AttributeCalculator()))
+            : this(new SightingsService(new ParseSiteStorage()), new KustobsarSightingFactory(new AttributeCalculator()))
         {
         }
 
@@ -82,6 +84,35 @@
 
             return new ContentResult { Content = "test" };
         }
+
+        public ActionResult TestAdd()
+        {
+            Log.Info("TestAdd");
+
+            var sightings = new List<Sighting>();
+
+            sightings.Add(new Sighting
+            {
+                SightingId = 1234567,
+                TaxonId = 205976,
+                SiteId = 2084467,
+                SiteName = "Välen, Göteborg",
+                Forsamling = "Näset",
+                Kommun = "Göteborg",
+                Lan = "Västra Götaland",
+                Landskap = "Västergötland",
+                Socken = "Göteborg",
+                SiteXCoord = 7890733,
+                SiteYCoord = 1325761,
+                StartDate = new DateTime(2015, 10, 01),
+                EndDate = new DateTime(2015, 10, 01),
+            });
+
+            sightingService.StoreSightings(sightings);
+
+            return new ContentResult { Content = "testadd" };
+        }
+
 
         [HttpPost]
         public ActionResult Sightings(IList<Sighting> sightings)

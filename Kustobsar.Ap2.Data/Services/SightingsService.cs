@@ -1,4 +1,6 @@
-﻿namespace Kustobsar.Ap2.Data.Services
+﻿using Kustobsar.Ap2.Data.ParseData.Storage;
+
+namespace Kustobsar.Ap2.Data.Services
 {
     using System;
     using System.Collections.Generic;
@@ -18,10 +20,16 @@
 
     public class SightingsService
     {
+        private readonly ParseSiteStorage _siteStorage;
         private static readonly ILog Log = LogManager.GetLogger<SightingsService>();
 
         private PropertyInfo[] sightingProperties;
-        
+
+        public SightingsService(ParseSiteStorage siteStorage)
+        {
+            _siteStorage = siteStorage;
+        }
+
         private PropertyInfo[] SightingProperties
         {
             get
@@ -205,6 +213,29 @@
                 foreach (var key in updatedUseCountSites.Keys)
                 {
                     session.Update(updatedUseCountSites[key]);
+                }
+
+                session.Flush();
+            }
+
+            using (var session = NHibernateConfiguration.GetSession())
+            {
+                foreach (var key in siteDtos.Keys.ToArray())
+                {
+                    var siteDto = siteDtos[key];
+                    try
+                    {
+                        var id = _siteStorage.Save(siteDto);
+                        if (siteDto.ParseId == null)
+                        {
+                            siteDto.ParseId = id;
+                            session.Update(siteDto);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("Unable to save site " + siteDto.SiteId + " to parse", e);
+                    }
                 }
 
                 session.Flush();

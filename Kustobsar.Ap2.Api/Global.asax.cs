@@ -1,4 +1,6 @@
-﻿namespace Kustobsar.Ap2.Api
+﻿using Kustobsar.Ap2.Data.ParseData;
+
+namespace Kustobsar.Ap2.Api
 {
     using System.Web.Mvc;
     using System.Web.Routing;
@@ -9,6 +11,7 @@
         {
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+            ParseInitializer.Initialize();
         }
     }
 }
