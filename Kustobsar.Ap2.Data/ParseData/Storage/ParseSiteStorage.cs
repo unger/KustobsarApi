@@ -16,7 +16,7 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
     {
         public string Save(SiteDto site)
         {
-            var webMerc = new WebMercatorPosition(site.SiteXCoord, site.SiteYCoord);
+            var webMerc = new WebMercatorPosition(site.SiteYCoord, site.SiteXCoord);
             var location = PositionConverter.ToWgs84(webMerc);
 
             var parseSite = new ParseSite
@@ -30,8 +30,8 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
                 Landskap = site.Landskap,
                 Socken = site.Socken,
                 UseCount = site.UseCount ?? 0,
-                SiteXCoord = site.SiteXCoord,
                 SiteYCoord = site.SiteYCoord,
+                SiteXCoord = site.SiteXCoord,
                 Location = new ParseGeoPoint(location.Latitude, location.Longitude)
             };
 
