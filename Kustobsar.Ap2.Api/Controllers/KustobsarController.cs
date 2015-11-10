@@ -63,13 +63,20 @@ namespace Kustobsar.Ap2.Api.Controllers
 
             var sightings = this.sightingService.GetSightings(date);
 
-            var kustobsarSightings =
-                sightings.Where(s => s.Taxon.TaxonId != 0).Select(this.kustobsarSightingsFactory.Create);
+            // Add temp fix to remove non birds
+            var badDate = new DateTime(2015, 11, 10);
+
+            var kustobsarSightings = sightings
+                         .Where(s => s.Taxon.TaxonId != 0)
+                         .Where(s => s.Taxon.EnglishName != null && s.Taxon.Updated.HasValue && s.Taxon.Updated.Value < badDate)
+                         .Select(this.kustobsarSightingsFactory.Create);
 
             int kod;
             kustobsarSightings = int.TryParse(rrkkod, out kod)
                                      ? kustobsarSightings.Where(k => k.RrkKod == kod)
                                      : kustobsarSightings.Where(k => k.RrkKod != 0);
+
+            
 
             var orderedSightings = this.OrderSightings(kustobsarSightings, rrksort, sort, sortorder).ToList();
 
