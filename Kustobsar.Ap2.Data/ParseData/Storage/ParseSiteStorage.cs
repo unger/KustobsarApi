@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Kustobsar.Ap2.Data.Model;
 using Kustobsar.Ap2.Data.ParseData.Model;
 using Parse;
+using SafeMapper;
 using SwedishCoordinates;
 using SwedishCoordinates.Positions;
 
@@ -19,30 +20,13 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
             var webMerc = new WebMercatorPosition(site.SiteYCoord, site.SiteXCoord);
             var location = PositionConverter.ToWgs84(webMerc);
 
-            var parseSite = new ParseSite
-            {
-                ObjectId = site.ParseId,
-                SiteId = site.SiteId,
-                SiteName = site.SiteName,
-                Forsamling = site.Forsamling,
-                Kommun = site.Kommun,
-                Lan = site.Lan,
-                Landskap = site.Landskap,
-                Socken = site.Socken,
-                UseCount = site.UseCount ?? 0,
-                SiteYCoord = site.SiteYCoord,
-                SiteXCoord = site.SiteXCoord,
-                Location = new ParseGeoPoint(location.Latitude, location.Longitude)
-            };
+            var parseSite = SafeMap.Convert<SiteDto, ParseSite>(site);
+            parseSite.ObjectId = site.ParseId;
+            parseSite.Location = new ParseGeoPoint(location.Latitude, location.Longitude);
 
             parseSite.SaveAsync().Wait();
 
             return parseSite.ObjectId;
-        }
-
-        public void UpdateSite()
-        {
-            
         }
     }
 }

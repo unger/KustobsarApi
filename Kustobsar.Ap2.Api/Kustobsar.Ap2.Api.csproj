@@ -40,9 +40,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Artportalen, Version=0.1.64.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Artportalen.0.1.64.0\lib\net45\Artportalen.dll</HintPath>
+    <Reference Include="Artportalen, Version=0.2.73.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Artportalen.0.2.73.0\lib\net45\Artportalen.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Common.Logging">
       <HintPath>..\packages\Common.Logging.3.1.0\lib\net40\Common.Logging.dll</HintPath>
@@ -70,12 +70,13 @@
       <HintPath>..\packages\Parse.1.6.1\lib\net45\Parse.NetFx45.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SafeMapper, Version=1.1.89.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SafeMapper.1.1.89.0\lib\net45\SafeMapper.dll</HintPath>
+    <Reference Include="SafeMapper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=eb6e5d6cfb80aac2, processorArchitecture=MSIL">
+      <HintPath>..\packages\SafeMapper.2.0.112\lib\net45\SafeMapper.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="SwedishCoordinates">
-      <HintPath>..\packages\SwedishCoordinates.0.1.6.0\lib\net45\SwedishCoordinates.dll</HintPath>
+    <Reference Include="SwedishCoordinates, Version=0.1.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SwedishCoordinates.0.1.8.0\lib\net45\SwedishCoordinates.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.DynamicData" />

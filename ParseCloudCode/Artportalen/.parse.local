@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "Artportalen": {
+      "applicationId": "iJ02ATq66kFdAwQDdTYBt99OeIeOOKMire3Kd8UK"
+    },
+    "_default": {
+      "link": "Artportalen"
+    }
+  }
+}
