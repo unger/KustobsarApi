@@ -20,9 +20,21 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
             var webMerc = new WebMercatorPosition(site.SiteYCoord, site.SiteXCoord);
             var location = PositionConverter.ToWgs84(webMerc);
 
-            var parseSite = SafeMap.Convert<SiteDto, ParseSite>(site);
-            parseSite.ObjectId = site.ParseId;
-            parseSite.Location = new ParseGeoPoint(location.Latitude, location.Longitude);
+            var parseSite = new ParseSite
+            {
+                ObjectId = site.ParseId,
+                SiteId = site.SiteId,
+                SiteName = site.SiteName,
+                Forsamling = site.Forsamling,
+                Kommun = site.Kommun,
+                Lan = site.Lan,
+                Landskap = site.Landskap,
+                Socken = site.Socken,
+                UseCount = site.UseCount ?? 0,
+                SiteXCoord = site.SiteXCoord,
+                SiteYCoord = site.SiteYCoord,
+                Location = new ParseGeoPoint(location.Latitude, location.Longitude)
+            };
 
             parseSite.SaveAsync().Wait();
 
