@@ -32,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Artportalen, Version=0.2.73.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Artportalen.0.2.73.0\lib\net45\Artportalen.dll</HintPath>
+    <Reference Include="Artportalen, Version=0.2.74.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Artportalen.0.2.74.0\lib\net45\Artportalen.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Common.Logging">
@@ -104,8 +104,10 @@
     <Compile Include="Model\SiteDto.cs" />
     <Compile Include="Model\TaxonDto.cs" />
     <Compile Include="Model\SightingDto.cs" />
+    <Compile Include="ParseData\Model\ParseSighting.cs" />
     <Compile Include="ParseData\Model\ParseSite.cs" />
     <Compile Include="ParseData\ParseInitializer.cs" />
+    <Compile Include="ParseData\Storage\ParseSightingsStorage.cs" />
     <Compile Include="ParseData\Storage\ParseSiteStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\SightingsService.cs" />

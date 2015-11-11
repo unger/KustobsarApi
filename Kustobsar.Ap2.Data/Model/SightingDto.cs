@@ -45,5 +45,7 @@
         public virtual string HasMedia { get; set; }
 
         public virtual string Source { get; set; }
+
+        public virtual string ParseId { get; set; }
     }
 }

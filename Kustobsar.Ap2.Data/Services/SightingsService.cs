@@ -21,13 +21,15 @@ namespace Kustobsar.Ap2.Data.Services
     public class SightingsService
     {
         private readonly ParseSiteStorage _siteStorage;
+        private readonly ParseSightingsStorage _sightingsStorage;
         private static readonly ILog Log = LogManager.GetLogger<SightingsService>();
 
         private PropertyInfo[] sightingProperties;
 
-        public SightingsService(ParseSiteStorage siteStorage)
+        public SightingsService(ParseSiteStorage siteStorage, ParseSightingsStorage sightingsStorage)
         {
             _siteStorage = siteStorage;
+            _sightingsStorage = sightingsStorage;
         }
 
         private PropertyInfo[] SightingProperties
@@ -235,6 +237,23 @@ namespace Kustobsar.Ap2.Data.Services
                     catch (Exception e)
                     {
                         Log.Error("Unable to save site " + siteDto.SiteId + " to parse", e);
+                    }
+                }
+
+                foreach (var sightingDto in sightingDtos)
+                {
+                    try
+                    {
+                        var id = _sightingsStorage.Save(sightingDto);
+                        if (sightingDto.ParseId == null)
+                        {
+                            sightingDto.ParseId = id;
+                            session.Update(sightingDto);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("Unable to save sighting " + sightingDto.SightingId + " to parse", e);
                     }
                 }
 

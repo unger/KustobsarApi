@@ -28,7 +28,7 @@ namespace Kustobsar.Ap2.Api.Controllers
         private readonly KustobsarSightingFactory kustobsarSightingsFactory;
 
         public KustobsarController()
-            : this(new SightingsService(new ParseSiteStorage()), new KustobsarSightingFactory(new AttributeCalculator()))
+            : this(new SightingsService(new ParseSiteStorage(), new ParseSightingsStorage(new AttributeCalculator())), new KustobsarSightingFactory(new AttributeCalculator()))
         {
         }
 

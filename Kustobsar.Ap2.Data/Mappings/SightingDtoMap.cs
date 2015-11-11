@@ -25,6 +25,7 @@
             this.Map(x => x.NotRecovered);
             this.Map(x => x.PublicComment);
             this.Map(x => x.Source);
+            this.Map(x => x.ParseId).Length(10);
 
             this.References(x => x.Taxon, "TaxonId").Not.LazyLoad();
             this.References(x => x.Site, "SiteId").Not.LazyLoad();
