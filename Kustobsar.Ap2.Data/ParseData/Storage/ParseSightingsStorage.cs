@@ -31,6 +31,7 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
             var parseSighting = new ParseSighting
             {
                 ObjectId = sighting.ParseId,
+                SightingId = sighting.SightingId,
                 TaxonPrefix = sighting.Taxon.Prefix,
                 TaxonId = sighting.Taxon.TaxonId,
                 TaxonName = sighting.Taxon.CommonName,
