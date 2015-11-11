@@ -32,9 +32,10 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
             {
                 ObjectId = sighting.ParseId,
                 SightingId = sighting.SightingId,
+                TaxonSortOrder = sighting.Taxon.SortOrder,
                 TaxonPrefix = sighting.Taxon.Prefix,
                 TaxonId = sighting.Taxon.TaxonId,
-                TaxonName = sighting.Taxon.CommonName,
+                TaxonName = string.IsNullOrEmpty(sighting.Taxon.CommonName) ? sighting.Taxon.ScientificName : sighting.Taxon.CommonName,
                 Unsure = sighting.UnsureDetermination,
                 NotRecovered = sighting.NotRecovered,
                 Attribute = this.attributeCalculator.GetAttribute(sighting.Quantity, sighting.StageId, sighting.GenderId, sighting.ActivityId),

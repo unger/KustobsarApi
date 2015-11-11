@@ -13,6 +13,13 @@ namespace Kustobsar.Ap2.Data.ParseData.Model
             set { SetProperty<long>(value); }
         }
 
+        [ParseFieldName("taxonSortOrder")]
+        public int? TaxonSortOrder
+        {
+            get { return GetProperty<int?>(); }
+            set { SetProperty<int?>(value); }
+        }
+
         [ParseFieldName("taxonPrefix")]
         public int? TaxonPrefix
         {
