@@ -163,3 +163,28 @@ Parse.Cloud.beforeSave("Sighting", function(request, response) {
 		response.success();
 	}
 });
+
+Parse.Cloud.beforeSave("Taxon", function(request, response) {
+	var taxon = request.object;
+	
+	if (!taxon.id) {
+		// this is a new object
+		console.log("New taxon check for uniqueness");
+		var query = new Parse.Query("Taxon");
+			query.equalTo("taxonId", taxon.get("taxonId"));
+			query.first({
+			  success: function(oldTaxon) {
+				if (oldTaxon) {
+				  response.error("A Taxon with this taxonId already exists.");
+				} else {
+				  response.success();
+				}
+			  },
+			  error: function(error) {
+				response.error("Could not validate uniqueness for this Taxon object.");
+			  }
+			});
+    } else {
+		response.success();
+	}
+});
