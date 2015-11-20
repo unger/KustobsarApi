@@ -24,6 +24,8 @@ namespace Kustobsar.Ap2.Data.ParseData
             var parseKeys = GetKeys();
 
             ParseObject.RegisterSubclass<ParseSite>();
+            ParseObject.RegisterSubclass<ParseSighting>();
+            ParseObject.RegisterSubclass<ParseTaxon>();
             ParseClient.Initialize(parseKeys.ApplicationId, parseKeys.NetKey);
 
         }

@@ -106,9 +106,11 @@
     <Compile Include="Model\SightingDto.cs" />
     <Compile Include="ParseData\Model\ParseSighting.cs" />
     <Compile Include="ParseData\Model\ParseSite.cs" />
+    <Compile Include="ParseData\Model\ParseTaxon.cs" />
     <Compile Include="ParseData\ParseInitializer.cs" />
     <Compile Include="ParseData\Storage\ParseSightingsStorage.cs" />
     <Compile Include="ParseData\Storage\ParseSiteStorage.cs" />
+    <Compile Include="ParseData\Storage\TaxonStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\SightingsService.cs" />
   </ItemGroup>

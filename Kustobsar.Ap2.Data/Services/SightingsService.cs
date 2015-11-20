@@ -22,14 +22,16 @@ namespace Kustobsar.Ap2.Data.Services
     {
         private readonly ParseSiteStorage _siteStorage;
         private readonly ParseSightingsStorage _sightingsStorage;
+        private readonly TaxonStorage _taxonStorage;
         private static readonly ILog Log = LogManager.GetLogger<SightingsService>();
 
         private PropertyInfo[] sightingProperties;
 
-        public SightingsService(ParseSiteStorage siteStorage, ParseSightingsStorage sightingsStorage)
+        public SightingsService(ParseSiteStorage siteStorage, ParseSightingsStorage sightingsStorage, TaxonStorage taxonStorage)
         {
             _siteStorage = siteStorage;
             _sightingsStorage = sightingsStorage;
+            _taxonStorage = taxonStorage;
         }
 
         private PropertyInfo[] SightingProperties
@@ -256,6 +258,27 @@ namespace Kustobsar.Ap2.Data.Services
                         Log.Error("Unable to save sighting " + sightingDto.SightingId + " to parse", e);
                     }
                 }
+
+                // Taxons
+                foreach (var key in taxonDtos.Keys.ToArray())
+                {
+                    var taxonDto = taxonDtos[key];
+                    try
+                    {
+                        // Only save taxons not yet created to parse
+                        if (taxonDto.ParseId == null)
+                        {
+                            var id = _taxonStorage.Save(taxonDto);
+                            taxonDto.ParseId = id;
+                            session.Update(taxonDto);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("Unable to save taxon " + taxonDto.TaxonId + " to parse", e);
+                    }
+                }
+
 
                 session.Flush();
             }

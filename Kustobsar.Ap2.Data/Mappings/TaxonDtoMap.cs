@@ -15,6 +15,8 @@
             this.Map(x => x.Author);
             this.Map(x => x.SortOrder);
             this.Map(x => x.Prefix);
+            this.Map(x => x.TaxonType);
+            this.Map(x => x.ParseId);
 
             this.Version(x => x.Updated).CustomType("Timestamp").Nullable();
         }

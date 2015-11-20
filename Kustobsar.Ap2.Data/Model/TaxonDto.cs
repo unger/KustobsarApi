@@ -19,5 +19,9 @@
         public virtual int? Prefix { get; set; }
 
         public virtual DateTime? Updated { get; set; }
+
+        public virtual string TaxonType { get; set; }
+
+        public virtual string ParseId { get; set; }
     }
 }
