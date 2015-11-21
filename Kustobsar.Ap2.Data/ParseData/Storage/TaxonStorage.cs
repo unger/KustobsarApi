@@ -10,7 +10,7 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
     {
         public string Save(TaxonDto taxon)
         {
-            var parseSighting = new ParseTaxon
+            var parseTaxon = new ParseTaxon
             {
                 ObjectId = taxon.ParseId,
                 TaxonId = taxon.TaxonId,
@@ -22,9 +22,9 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
                 Type = taxon.TaxonType,
             };
 
-            parseSighting.SaveAsync().Wait();
+            parseTaxon.SaveAsync().Wait();
 
-            return parseSighting.ObjectId;
+            return parseTaxon.ObjectId;
         }
     }
 }

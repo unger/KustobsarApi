@@ -63,12 +63,8 @@ namespace Kustobsar.Ap2.Api.Controllers
 
             var sightings = this.sightingService.GetSightings(date);
 
-            // Add temp fix to remove non birds
-            var badDate = new DateTime(2015, 11, 10);
-
             var kustobsarSightings = sightings
                          .Where(s => s.Taxon.TaxonId != 0)
-                         .Where(s => s.Taxon.EnglishName != null && s.Taxon.Updated.HasValue && s.Taxon.Updated.Value < badDate)
                          .Select(this.kustobsarSightingsFactory.Create);
 
             int kod;

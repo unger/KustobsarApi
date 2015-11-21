@@ -209,6 +209,7 @@ namespace Kustobsar.Ap2.Data.Services
                     }
                     else
                     {
+                        sighting.ParseId = sightingFromDb.ParseId;
                         session.Delete(sightingFromDb);
                         session.Save(sighting, sighting.SightingId);
                     }
