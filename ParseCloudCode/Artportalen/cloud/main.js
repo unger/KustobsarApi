@@ -49,7 +49,7 @@ Parse.Cloud.define("match", function(request, response) {
 	ruleQuery.find().then(
 		function(rules) {
 			var compoundQuery;
-
+			
 			for (var i = 0 ; i < rules.length ; i++) {
 				var rule = rules[i];
 				var query = new Parse.Query("Sighting");
@@ -115,8 +115,9 @@ Parse.Cloud.define("match", function(request, response) {
 
 Parse.Cloud.beforeSave("Site", function(request, response) {
 	var site = request.object;
+	var siteId = site.get("siteId");
 	
-	if (!site.id) {
+	if (!site.id && siteId != null) {
 		// this is a new object
 		console.log("New site check for uniqueness");
 		var query = new Parse.Query("Site");
@@ -125,24 +126,33 @@ Parse.Cloud.beforeSave("Site", function(request, response) {
 			  success: function(oldSite) {
 				if (oldSite) {
 				  response.error("A Site with this siteId already exists.");
-				} else {
-				  response.success();
 				}
 			  },
 			  error: function(error) {
 				response.error("Could not validate uniqueness for this Site object.");
 			  }
 			});
-    } else {
-		response.success();
 	}
+	
+	var search = [];
+	var siteName = (site.get("siteName") || "").toLowerCase().replace(/[^a-zåäö\d]/gi, " ");
+	var superSite = (site.get("superSite") || "").toLowerCase();
+	var kommun = (site.get("kommun") || "").toLowerCase();
+	var landskap = (site.get("landskap") || "").toLowerCase();
+	if (siteName != "") search.push(siteName);
+	if (superSite != "") search.push(superSite);
+	if (kommun != "") search.push(kommun);
+	if (landskap != "") search.push(landskap);
+	
+	site.set("search", search.join(" "));
+    response.success();
 });
 
 
 Parse.Cloud.beforeSave("Sighting", function(request, response) {
 	var sighting = request.object;
-	
-	if (!sighting.id) {
+	var sightingId = sighting.get("sightingId");
+	if (!sighting.id && sightingId != null) {
 		// this is a new object
 		console.log("New sighting check for uniqueness");
 		var query = new Parse.Query("Sighting");
@@ -187,4 +197,193 @@ Parse.Cloud.beforeSave("Taxon", function(request, response) {
     } else {
 		response.success();
 	}
+});
+
+Parse.Cloud.define("matchRules", function(request, response) {
+
+	Parse.Cloud.useMasterKey();
+	if (!request.params.id) {
+		response.error("no sighting id supplied");
+	}
+
+
+	var ParseSighting = Parse.Object.extend("Sighting");
+	var query = new Parse.Query(ParseSighting);
+	query.get(request.params.id, {
+	  success: function(sighting) {
+		// The object was retrieved successfully.
+
+		
+		var ruleQuery = new Parse.Query("Rule");
+		ruleQuery.equalTo("isActive", true);
+		ruleQuery.greaterThanOrEqualTo("prefix", sighting.get("taxonPrefix"));
+		ruleQuery.containedIn("taxons", [sighting.get("taxonName"), null]);
+		ruleQuery.containedIn("kommuner", [sighting.get("kommun"), null]);
+		ruleQuery.containedIn("landskap", [sighting.get("landskap"), null]);
+		
+		ruleQuery.find({
+			success: function(rules) {
+				response.success(rules);
+			},
+			error: function(error) {
+				response.error("matching failed: " + error);
+			}
+		});
+		
+	  },
+	  error: function(object, error) {
+		// The object was not retrieved successfully.
+		// error is a Parse.Error with an error code and message.
+		response.error(error);
+	  }
+	});
+
+});
+
+
+Parse.Cloud.afterSave("Sighting", function(request, response) {
+
+	Parse.Cloud.useMasterKey();
+
+	request.object.fetch({
+	  success: function(sighting) {
+
+		var ruleQuery = new Parse.Query("Rule");
+		ruleQuery.equalTo("isActive", true);
+		ruleQuery.greaterThanOrEqualTo("prefix", sighting.get("taxonPrefix"));
+		ruleQuery.containedIn("taxons", [sighting.get("taxonName"), null]);
+		ruleQuery.containedIn("kommuner", [sighting.get("kommun"), null]);
+		ruleQuery.containedIn("landskap", [sighting.get("landskap"), null]);
+		
+		ruleQuery.find({
+			success: function(rules) {
+
+				if (rules.length > 0) {
+
+					var query = new Parse.Query("Alert");
+					query.equalTo("taxonName", sighting.get("taxonName"));
+					query.equalTo("kommun", sighting.get("kommun"));
+					query.equalTo("landskap", sighting.get("landskap"));
+					query.greaterThanOrEqualTo("endDate", sighting.get("endDate"));
+
+					query.find().then(
+						function(alerts) {
+							if (alerts.length == 0) {
+								
+								var ParseAlert = Parse.Object.extend("Alert");
+								var parseAlert = new ParseAlert();
+
+								parseAlert.save({
+								  taxonPrefix: sighting.get("taxonPrefix"),
+								  taxonName: sighting.get("taxonName"),
+								  kommun: sighting.get("kommun"),
+								  landskap: sighting.get("landskap"),
+								  endDate: sighting.get("endDate")
+								}, {
+								  success: function(parseAlert) {
+									// The object was saved successfully.
+								  },
+								  error: function(parseAlert, error) {
+									// The save failed.
+									// error is a Parse.Error with an error code and message.
+									console.log("ALERT: Failed to save alert" + error);
+								  }
+								});
+								
+								
+							}
+						},
+						function(error) {
+							console.log("afterSave sighting error occured: " + error);
+						});
+				
+				}
+
+			},
+			error: function(error) {
+				console.log("matching failed: " + error);
+			}
+		});
+
+
+		
+	  },
+	  error: function(user, error) {
+		console.log("error fetched: " + error);
+	  }
+	});  
+});
+
+
+
+Parse.Cloud.afterSave("Alert", function(request) {
+
+	Parse.Cloud.useMasterKey();
+
+	var alertObject = request.object;
+	var taxonName = alertObject.get("taxonName");
+	var kommun = alertObject.get("kommun");
+	var landskap = alertObject.get("landskap");
+	var endDate = alertObject.get("endDate");
+	
+	var ruleQuery = new Parse.Query("Rule");
+	ruleQuery.equalTo("isActive", true);
+	ruleQuery.greaterThanOrEqualTo("prefix", alertObject.get("taxonPrefix"));
+	ruleQuery.containedIn("taxons", [alertObject.get("taxonName"), null]);
+	ruleQuery.containedIn("kommuner", [alertObject.get("kommun"), null]);
+	ruleQuery.containedIn("landskap", [alertObject.get("landskap"), null]);
+	
+	ruleQuery.find().then(function(rules) {
+		
+		var users = [];
+		
+		for(var i = 0 ; i < rules.length ; i++) {
+			users.push(rules[i].get("user"));
+		}
+
+		return users;
+		
+	}).then(function(users) {
+
+		var installationQuery = new Parse.Query(Parse.Installation);
+		installationQuery.containedIn('user', users);
+		
+		var pushMessage = taxonName + ", " + kommun + ", " + landskap;
+		
+		Parse.Push.send({
+			where: installationQuery,
+			data: {
+				alert: pushMessage,
+				sound: "default"
+			}
+		}, {
+			success: function () {
+				console.log("Push notification was sent");
+			},
+			error: function (error) {
+				console.log("An error occured while trying to send push message. Error message: " + error);
+			}
+		});
+		
+	});
+	
+});
+
+
+Parse.Cloud.define("installations", function(request, response) {
+
+	Parse.Cloud.useMasterKey();
+	var installationQuery = new Parse.Query(Parse.Installation);
+	installationQuery.equalTo('user', request.user);
+
+	installationQuery.find({
+		success: function(installations) {
+			response.success(installations);
+		},
+		error: function(error) {
+			response.error("error getting sessions " + error);
+		}
+	});
+	
+	
 });
