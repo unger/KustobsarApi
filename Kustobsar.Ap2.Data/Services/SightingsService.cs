@@ -1,4 +1,5 @@
 ﻿using Kustobsar.Ap2.Data.ParseData.Storage;
+using SafeMapper;
 
 namespace Kustobsar.Ap2.Data.Services
 {
@@ -15,8 +16,6 @@ namespace Kustobsar.Ap2.Data.Services
     using Kustobsar.Ap2.Data.Model;
 
     using NHibernate.Linq;
-
-    using SafeMapper;
 
     public class SightingsService
     {

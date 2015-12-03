@@ -8,7 +8,6 @@ using Artportalen.Helpers;
 using Kustobsar.Ap2.Data.Model;
 using Kustobsar.Ap2.Data.ParseData.Model;
 using Parse;
-using SafeMapper;
 using SwedishCoordinates;
 using SwedishCoordinates.Positions;
 

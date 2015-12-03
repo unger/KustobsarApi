@@ -32,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Artportalen, Version=0.2.74.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Artportalen.0.2.74.0\lib\net45\Artportalen.dll</HintPath>
+    <Reference Include="Artportalen, Version=0.3.77.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Artportalen.0.3.77.0\lib\portable-net45+dnxcore50+win+MonoAndroid10+xamarinios10+MonoTouch10\Artportalen.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Common.Logging">
