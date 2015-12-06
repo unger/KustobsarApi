@@ -259,12 +259,63 @@ Parse.Cloud.afterSave("Sighting", function(request, response) {
 			success: function(rules) {
 
 				if (rules.length > 0) {
+					var taxonName = sighting.get("taxonName");
+					var kommun = sighting.get("kommun");
+					var landskap = sighting.get("landskap");
+					var endDate = sighting.get("endDate");
+					var observer = sighting.get("sightingObservers");
+					var landskapShort = landskap;
+					
+					if (observer.indexOf(",") != -1) {
+						observer = observer.substr(0, timeString.indexOf(","));
+					}
+
+					var timeString = endDate.toTimeString().split(' ')[0];
+					if (timeString.indexOf(":") != -1) {
+						timeString = timeString.substr(0, timeString.lastIndexOf(":"));
+					}
+					var dateString = endDate.getDate() + "/" + endDate.getMonth();
+					if (timeString != "00:00") {
+						dateString = dateString + " " + timeString;
+					}
+					
+					switch (landskap) {
+					  case "Skåne": landskapShort = "Sk"; break;
+					  case "Blekinge": landskapShort = "Bl"; break;
+					  case "Småland": landskapShort = "Sm"; break;
+					  case "Öland": landskapShort = "Öl"; break;
+					  case "Gotland": landskapShort = "Go"; break;
+					  case "Halland": landskapShort = "Hl"; break;
+					  case "Bohuslän": landskapShort = "Bo"; break;
+					  case "Dalsland": landskapShort = "Ds"; break;
+					  case "Västergötland": landskapShort = "Vg"; break;
+					  case "Närke": landskapShort = "Nä"; break;
+					  case "Östergötland": landskapShort = "Ög"; break;
+					  case "Södermanland": landskapShort = "Sö"; break;
+					  case "Uppland": landskapShort = "Up"; break;
+					  case "Västmanland": landskapShort = "Vs"; break;
+					  case "Värmland": landskapShort = "Vr"; break;
+					  case "Dalarna": landskapShort = "Da"; break;
+					  case "Gästrikland": landskapShort = "Gä"; break;
+					  case "Medelpad": landskapShort = "Me"; break;
+					  case "Hälsingland": landskapShort = "Hs"; break;
+					  case "Ångermanland": landskapShort = "Ån"; break;
+					  case "Västerbotten": landskapShort = "Vb"; break;
+					  case "Norrbotten": landskapShort = "Nb"; break;
+					  case "Härjedalen": landskapShort = "Hä"; break;
+					  case "Jämtland": landskapShort = "Jä"; break;
+					  case "Åsele lappmark": landskapShort = "Ås"; break;
+					  case "Lycksele lappmark": landskapShort = "Ly"; break;
+					  case "Pite lappmark": landskapShort = "Pi"; break;
+					  case "Lule lappmark": landskapShort = "Lu"; break;
+					  case "Torne lappmark": landskapShort = "To"; break;
+					}				
 
 					var query = new Parse.Query("Alert");
-					query.equalTo("taxonName", sighting.get("taxonName"));
-					query.equalTo("kommun", sighting.get("kommun"));
-					query.equalTo("landskap", sighting.get("landskap"));
-					query.greaterThanOrEqualTo("endDate", sighting.get("endDate"));
+					query.equalTo("taxonName", taxonName);
+					query.equalTo("kommun", kommun);
+					query.equalTo("landskap", landskap);
+					query.greaterThanOrEqualTo("endDate", endDate);
 
 					query.find().then(
 						function(alerts) {
@@ -272,13 +323,16 @@ Parse.Cloud.afterSave("Sighting", function(request, response) {
 								
 								var ParseAlert = Parse.Object.extend("Alert");
 								var parseAlert = new ParseAlert();
+								
+								var pushMessage = taxonName + " " + kommun + ", " + landskapShort + " " + dateString + " (" + observer + ")";
 
 								parseAlert.save({
 								  taxonPrefix: sighting.get("taxonPrefix"),
 								  taxonName: sighting.get("taxonName"),
 								  kommun: sighting.get("kommun"),
 								  landskap: sighting.get("landskap"),
-								  endDate: sighting.get("endDate")
+								  endDate: sighting.get("endDate"),
+								  pushMessage: pushMessage
 								}, {
 								  success: function(parseAlert) {
 									// The object was saved successfully.
@@ -289,7 +343,6 @@ Parse.Cloud.afterSave("Sighting", function(request, response) {
 									console.log("ALERT: Failed to save alert" + error);
 								  }
 								});
-								
 								
 							}
 						},
@@ -325,6 +378,7 @@ Parse.Cloud.afterSave("Alert", function(request) {
 	var kommun = alertObject.get("kommun");
 	var landskap = alertObject.get("landskap");
 	var endDate = alertObject.get("endDate");
+	var pushMessage = alertObject.get("pushMessage");
 	
 	var ruleQuery = new Parse.Query("Rule");
 	ruleQuery.equalTo("isActive", true);
@@ -348,13 +402,13 @@ Parse.Cloud.afterSave("Alert", function(request) {
 		var installationQuery = new Parse.Query(Parse.Installation);
 		installationQuery.containedIn('user', users);
 		
-		var pushMessage = taxonName + ", " + kommun + ", " + landskap;
-		
 		Parse.Push.send({
 			where: installationQuery,
 			data: {
 				alert: pushMessage,
-				sound: "default"
+				badge: "Increment",
+				sound: "default",
+				title: taxonName + ", " + kommun
 			}
 		}, {
 			success: function () {
