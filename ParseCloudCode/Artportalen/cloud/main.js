@@ -267,7 +267,7 @@ Parse.Cloud.afterSave("Sighting", function(request, response) {
 					var landskapShort = landskap;
 					
 					if (observer.indexOf(",") != -1) {
-						observer = observer.substr(0, timeString.indexOf(","));
+						observer = observer.substr(0, observer.indexOf(","));
 					}
 
 					var timeString = endDate.toTimeString().split(' ')[0];
