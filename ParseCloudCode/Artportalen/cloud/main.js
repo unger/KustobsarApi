@@ -274,7 +274,7 @@ Parse.Cloud.afterSave("Sighting", function(request, response) {
 					if (timeString.indexOf(":") != -1) {
 						timeString = timeString.substr(0, timeString.lastIndexOf(":"));
 					}
-					var dateString = endDate.getDate() + "/" + endDate.getMonth();
+					var dateString = endDate.getDate() + "/" + (endDate.getMonth() + 1);
 					if (timeString != "00:00") {
 						dateString = dateString + " " + timeString;
 					}
