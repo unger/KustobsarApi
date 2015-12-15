@@ -32,6 +32,9 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
                 UseCount = site.UseCount ?? 0,
                 SiteXCoord = site.SiteXCoord,
                 SiteYCoord = site.SiteYCoord,
+                ParentId = site.ParentId,
+                IsPublic = site.IsPublic,
+                Accuracy = site.Accuracy,
                 Location = new ParseGeoPoint(location.Latitude, location.Longitude)
             };
 

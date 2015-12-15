@@ -32,8 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Artportalen, Version=0.3.77.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Artportalen.0.3.77.0\lib\portable-net45+dnxcore50+win+MonoAndroid10+xamarinios10+MonoTouch10\Artportalen.dll</HintPath>
+    <Reference Include="AngleSharp, Version=0.9.3.41352, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
+      <HintPath>..\packages\AngleSharp.0.9.3\lib\net45\AngleSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Artportalen, Version=0.4.85.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Artportalen.0.4.85.0\lib\portable-net45+win+MonoAndroid10+xamarinios10+MonoTouch10\Artportalen.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Common.Logging">
@@ -76,8 +80,8 @@
       <HintPath>..\packages\SafeMapper.2.0.112\lib\net45\SafeMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SwedishCoordinates, Version=0.1.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SwedishCoordinates.0.1.8.0\lib\net45\SwedishCoordinates.dll</HintPath>
+    <Reference Include="SwedishCoordinates, Version=0.1.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SwedishCoordinates.0.1.10.0\lib\portable-net45+win+wp80+MonoAndroid10+xamarinios10+MonoTouch10\SwedishCoordinates.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -95,6 +99,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\AppKeys.cs" />
     <Compile Include="Mappings\TaxonInfoMap.cs" />
     <Compile Include="Model\TaxonInfo.cs" />
     <Compile Include="NHibernateConfiguration.cs" />
@@ -112,6 +117,7 @@
     <Compile Include="ParseData\Storage\ParseSiteStorage.cs" />
     <Compile Include="ParseData\Storage\TaxonStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\SiteService.cs" />
     <Compile Include="Services\SightingsService.cs" />
   </ItemGroup>
   <ItemGroup>

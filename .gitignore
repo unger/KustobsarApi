@@ -196,3 +196,4 @@ FakesAssemblies/
 *.opt
 /Kustobsar.Ap2.Api/App_Data
 Kustobsar.Ap2.Api/parsekeys.json
+/Kustobsar.Ap2.Api/appkeys.json

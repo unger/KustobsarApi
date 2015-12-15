@@ -28,6 +28,10 @@
 
         public virtual int? UseCount { get; set; }
 
+        public virtual long? ParentId { get; set; }
+
+        public virtual bool? IsPublic { get; set; }
+
         public virtual string ParseId { get; set; }
     }
 }

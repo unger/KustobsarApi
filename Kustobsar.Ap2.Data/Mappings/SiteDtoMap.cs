@@ -19,6 +19,8 @@
             this.Map(x => x.SiteYCoord);
             this.Map(x => x.SiteXCoord);
             this.Map(x => x.UseCount);
+            this.Map(x => x.ParentId);
+            this.Map(x => x.IsPublic);
             this.Map(x => x.ParseId).Length(10);
 
             this.Version(x => x.Updated).CustomType("Timestamp").Nullable();

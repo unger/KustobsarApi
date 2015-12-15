@@ -40,8 +40,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Artportalen, Version=0.3.77.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Artportalen.0.3.77.0\lib\portable-net45+dnxcore50+win+MonoAndroid10+xamarinios10+MonoTouch10\Artportalen.dll</HintPath>
+    <Reference Include="AngleSharp, Version=0.9.3.41352, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
+      <HintPath>..\packages\AngleSharp.0.9.3\lib\net45\AngleSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Artportalen, Version=0.4.85.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Artportalen.0.4.85.0\lib\portable-net45+win+MonoAndroid10+xamarinios10+MonoTouch10\Artportalen.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Common.Logging">
@@ -58,6 +62,10 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NLog, Version=3.2.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NLog.3.2.0.0\lib\net45\NLog.dll</HintPath>
@@ -70,8 +78,8 @@
       <HintPath>..\packages\Parse.1.6.1\lib\net45\Parse.NetFx45.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SwedishCoordinates, Version=0.1.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SwedishCoordinates.0.1.8.0\lib\net45\SwedishCoordinates.dll</HintPath>
+    <Reference Include="SwedishCoordinates, Version=0.1.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SwedishCoordinates.0.1.10.0\lib\portable-net45+win+wp80+MonoAndroid10+xamarinios10+MonoTouch10\SwedishCoordinates.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
@@ -127,8 +135,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Logic\KustobsarSightingFactory.cs" />
+    <Compile Include="Models\WebHookSitesParams.cs" />
     <Compile Include="Models\KustobsarSighting.cs" />
     <Compile Include="Models\SortField.cs" />
+    <Compile Include="Models\WebHookSitesRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

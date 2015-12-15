@@ -1,4 +1,8 @@
-﻿using Kustobsar.Ap2.Data.ParseData.Storage;
+﻿using System.IO;
+using Artportalen.Response.Web;
+using Kustobsar.Ap2.Data.Config;
+using Kustobsar.Ap2.Data.ParseData.Storage;
+using Newtonsoft.Json;
 
 namespace Kustobsar.Ap2.Api.Controllers
 {
@@ -25,16 +29,21 @@ namespace Kustobsar.Ap2.Api.Controllers
 
         private readonly SightingsService sightingService;
 
+        private readonly SiteService siteService;
         private readonly KustobsarSightingFactory kustobsarSightingsFactory;
 
         public KustobsarController()
-            : this(new SightingsService(new ParseSiteStorage(), new ParseSightingsStorage(new AttributeCalculator()), new TaxonStorage()), new KustobsarSightingFactory(new AttributeCalculator()))
+            : this(
+            new SightingsService(new ParseSiteStorage(), new ParseSightingsStorage(new AttributeCalculator()), new TaxonStorage()), 
+            new SiteService(new ParseSiteStorage()), 
+            new KustobsarSightingFactory(new AttributeCalculator()))
         {
         }
 
-        public KustobsarController(SightingsService sightingService, KustobsarSightingFactory kustobsarSightingsFactory)
+        public KustobsarController(SightingsService sightingService, SiteService siteService, KustobsarSightingFactory kustobsarSightingsFactory)
         {
             this.sightingService = sightingService;
+            this.siteService = siteService;
             this.kustobsarSightingsFactory = kustobsarSightingsFactory;
         }
 
@@ -143,6 +152,47 @@ namespace Kustobsar.Ap2.Api.Controllers
                 Trace.TraceError("Trace: Store sightings: " + e.Message);
                 Console.WriteLine("Console: Store sightings: " + e.Message);
                 Log.Error("Logger: Store sightings", e);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, e.Message);
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+
+        [HttpPost]
+        public ActionResult Sites()
+        {
+            if (ControllerContext.RequestContext.HttpContext.Request.Headers["X-Parse-Webhook-Key"] !=
+                AppKeys.Current.ParseWebhookKey)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Wrong or missing webhook key");
+            }
+
+            string requestData;
+            using (var sr = new StreamReader(ControllerContext.RequestContext.HttpContext.Request.InputStream))
+            {
+                requestData = sr.ReadToEnd();
+            }
+
+            var siteRequest = JsonConvert.DeserializeObject<WebHookSitesRequest>(requestData);
+            var sites = siteRequest.data.Sites;
+
+            try
+            {
+                if (sites != null && sites.Length > 0)
+                {
+                    Log.InfoFormat("Sites: {0}", sites.Length);
+                    this.siteService.StoreSites(sites);
+                }
+                else
+                {
+                    Log.Info("No sightings recieved");
+                }
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError("Trace: Store sightings: " + e.Message);
+                Console.WriteLine("Console: Store sightings: " + e.Message);
+                Log.Error("Logger: Store sightings");
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, e.Message);
             }
 
