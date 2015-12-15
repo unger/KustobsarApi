@@ -159,9 +159,9 @@ namespace Kustobsar.Ap2.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult Sites()
+        public ActionResult Sites(IList<SiteResponse> sites)
         {
-            if (ControllerContext.RequestContext.HttpContext.Request.Headers["X-Parse-Webhook-Key"] !=
+            /*if (ControllerContext.RequestContext.HttpContext.Request.Headers["X-Parse-Webhook-Key"] !=
                 AppKeys.Current.ParseWebhookKey)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Wrong or missing webhook key");
@@ -175,12 +175,12 @@ namespace Kustobsar.Ap2.Api.Controllers
 
             var siteRequest = JsonConvert.DeserializeObject<WebHookSitesRequest>(requestData);
             var sites = siteRequest.data.Sites;
-
+            */
             try
             {
-                if (sites != null && sites.Length > 0)
+                if (sites != null && sites.Count > 0)
                 {
-                    Log.InfoFormat("Sites: {0}", sites.Length);
+                    Log.InfoFormat("Sites: {0}", sites.Count);
                     this.siteService.StoreSites(sites);
                 }
                 else
