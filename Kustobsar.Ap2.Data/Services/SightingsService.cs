@@ -229,7 +229,7 @@ namespace Kustobsar.Ap2.Data.Services
                     var siteDto = siteDtos[key];
                     try
                     {
-                        var id = _siteStorage.Save(siteDto);
+                        var id = _siteStorage.Save(siteDto).Result;
                         if (siteDto.ParseId == null)
                         {
                             siteDto.ParseId = id;
@@ -246,7 +246,7 @@ namespace Kustobsar.Ap2.Data.Services
                 {
                     try
                     {
-                        var id = _sightingsStorage.Save(sightingDto);
+                        var id = _sightingsStorage.Save(sightingDto).Result;
                         if (sightingDto.ParseId == null)
                         {
                             sightingDto.ParseId = id;
@@ -268,7 +268,7 @@ namespace Kustobsar.Ap2.Data.Services
                         // Only save taxons not yet created to parse
                         if (taxonDto.ParseId == null)
                         {
-                            var id = _taxonStorage.Save(taxonDto);
+                            var id = _taxonStorage.Save(taxonDto).Result;
                             taxonDto.ParseId = id;
                             session.Update(taxonDto);
                         }

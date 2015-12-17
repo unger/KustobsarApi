@@ -46,6 +46,7 @@ namespace Kustobsar.Ap2.Data.Services
 
         public void StoreSites(IEnumerable<SiteResponse> sites)
         {
+            var updatedSiteIds = new HashSet<long>();
             var siteDtos = new Dictionary<long, SiteDto>();
 
             foreach (var site in sites)
@@ -68,7 +69,6 @@ namespace Kustobsar.Ap2.Data.Services
                 }
             }
 
-
             using (var session = NHibernateConfiguration.GetSession())
             {
                 // Sites
@@ -82,6 +82,11 @@ namespace Kustobsar.Ap2.Data.Services
                     }
                     else
                     {
+                        if (!string.IsNullOrEmpty(siteDto.ParseId))
+                        {
+                            updatedSiteIds.Add(siteDto.SiteId);
+                        }
+
                         if (!string.IsNullOrEmpty(siteDto.SiteName) && site.SiteName != siteDto.SiteName)
                         {
                             site.SiteName = siteDto.SiteName;
@@ -117,20 +122,15 @@ namespace Kustobsar.Ap2.Data.Services
                 session.Flush();
             }
 
-            /*
+            // Uppdatera endast lokaler som redan har ett ParseId för att undvika dubbletter
             using (var session = NHibernateConfiguration.GetSession())
             {
-                foreach (var key in siteDtos.Keys.ToArray())
+                foreach (var key in updatedSiteIds.ToArray())
                 {
                     var siteDto = siteDtos[key];
                     try
                     {
-                        var id = _siteStorage.Save(siteDto);
-                        if (siteDto.ParseId == null)
-                        {
-                            siteDto.ParseId = id;
-                            session.Update(siteDto);
-                        }
+                        var id = _siteStorage.Save(siteDto).Result;
                     }
                     catch (Exception e)
                     {
@@ -138,7 +138,7 @@ namespace Kustobsar.Ap2.Data.Services
                     }
                 }
                 session.Flush();
-            }*/
+            }
         }
     }
 }

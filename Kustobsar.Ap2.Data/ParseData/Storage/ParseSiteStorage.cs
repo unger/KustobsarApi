@@ -14,7 +14,7 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
 {
     public class ParseSiteStorage
     {
-        public string Save(SiteDto site)
+        public async Task<string> Save(SiteDto site)
         {
             var webMerc = new WebMercatorPosition(site.SiteYCoord, site.SiteXCoord);
             var location = PositionConverter.ToWgs84(webMerc);
@@ -38,7 +38,7 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
                 Location = new ParseGeoPoint(location.Latitude, location.Longitude)
             };
 
-            parseSite.SaveAsync().Wait();
+            await parseSite.SaveAsync();
 
             return parseSite.ObjectId;
         }

@@ -1,4 +1,5 @@
-﻿using Kustobsar.Ap2.Data.Model;
+﻿using System.Threading.Tasks;
+using Kustobsar.Ap2.Data.Model;
 using Kustobsar.Ap2.Data.ParseData.Model;
 using Parse;
 using SwedishCoordinates;
@@ -8,7 +9,7 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
 {
     public class TaxonStorage
     {
-        public string Save(TaxonDto taxon)
+        public async Task<string> Save(TaxonDto taxon)
         {
             var parseTaxon = new ParseTaxon
             {
@@ -22,7 +23,7 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
                 Type = taxon.TaxonType,
             };
 
-            parseTaxon.SaveAsync().Wait();
+            await parseTaxon.SaveAsync();
 
             return parseTaxon.ObjectId;
         }

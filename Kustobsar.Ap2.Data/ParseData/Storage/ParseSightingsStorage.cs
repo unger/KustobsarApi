@@ -22,7 +22,7 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
             this.attributeCalculator = attributeCalculator;
         }
 
-        public string Save(SightingDto sighting)
+        public async Task<string> Save(SightingDto sighting)
         {
             var webMerc = new WebMercatorPosition(sighting.Site.SiteYCoord, sighting.Site.SiteXCoord);
             var location = PositionConverter.ToWgs84(webMerc);
@@ -56,7 +56,7 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
                 Comment = sighting.PublicComment
             };
 
-            parseSighting.SaveAsync().Wait();
+            await parseSighting.SaveAsync();
 
             return parseSighting.ObjectId;
         }
