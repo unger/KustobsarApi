@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using Artportalen.Response.Web;
 using Kustobsar.Ap2.Data.Config;
 using Kustobsar.Ap2.Data.ParseData.Storage;
@@ -97,7 +98,7 @@ namespace Kustobsar.Ap2.Api.Controllers
             return new ContentResult { Content = "test" };
         }
 
-        public ActionResult TestAdd()
+        public async Task<ActionResult> TestAdd()
         {
             Log.Info("TestAdd");
 
@@ -105,7 +106,7 @@ namespace Kustobsar.Ap2.Api.Controllers
 
             sightings.Add(new Sighting
             {
-                SightingId = 1234567,
+                SightingId = 999999,
                 TaxonId = 205976,
                 SiteId = 2084467,
                 SiteName = "Välen, Göteborg",
@@ -120,14 +121,14 @@ namespace Kustobsar.Ap2.Api.Controllers
                 EndDate = new DateTime(2015, 10, 01),
             });
 
-            sightingService.StoreSightings(sightings);
+            await sightingService.StoreSightings(sightings);
 
             return new ContentResult { Content = "testadd" };
         }
 
 
         [HttpPost]
-        public ActionResult Sightings(IList<Sighting> sightings)
+        public async Task<ActionResult> Sightings(IList<Sighting> sightings)
         {
             try
             {
@@ -140,7 +141,7 @@ namespace Kustobsar.Ap2.Api.Controllers
                     this.sightingService.RemoveOldSightings(storeDays);
 
                     Log.InfoFormat("Sightings: {0}", sightings.Count);
-                    this.sightingService.StoreSightings(sightings);
+                    await this.sightingService.StoreSightings(sightings);
                 }
                 else
                 {
@@ -159,7 +160,7 @@ namespace Kustobsar.Ap2.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult Sites(IList<SiteResponse> sites)
+        public async Task<ActionResult> Sites(IList<SiteResponse> sites)
         {
             /*if (ControllerContext.RequestContext.HttpContext.Request.Headers["X-Parse-Webhook-Key"] !=
                 AppKeys.Current.ParseWebhookKey)
@@ -181,7 +182,7 @@ namespace Kustobsar.Ap2.Api.Controllers
                 if (sites != null && sites.Count > 0)
                 {
                     Log.InfoFormat("Sites: {0}", sites.Count);
-                    this.siteService.StoreSites(sites);
+                    await this.siteService.StoreSites(sites);
                 }
                 else
                 {

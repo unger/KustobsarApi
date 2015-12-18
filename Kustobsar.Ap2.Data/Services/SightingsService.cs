@@ -1,4 +1,5 @@
-﻿using Kustobsar.Ap2.Data.ParseData.Storage;
+﻿using System.Threading.Tasks;
+using Kustobsar.Ap2.Data.ParseData.Storage;
 using SafeMapper;
 
 namespace Kustobsar.Ap2.Data.Services
@@ -70,7 +71,7 @@ namespace Kustobsar.Ap2.Data.Services
             }
         }
 
-        public void StoreSightings(IEnumerable<Sighting> sightings)
+        public async Task StoreSightings(IEnumerable<Sighting> sightings)
         {
             var siteDtos = new Dictionary<long, SiteDto>();
             var taxonDtos = new Dictionary<int, TaxonDto>();
@@ -229,7 +230,7 @@ namespace Kustobsar.Ap2.Data.Services
                     var siteDto = siteDtos[key];
                     try
                     {
-                        var id = _siteStorage.Save(siteDto).Result;
+                        var id = await _siteStorage.Save(siteDto);
                         if (siteDto.ParseId == null)
                         {
                             siteDto.ParseId = id;
@@ -246,7 +247,7 @@ namespace Kustobsar.Ap2.Data.Services
                 {
                     try
                     {
-                        var id = _sightingsStorage.Save(sightingDto).Result;
+                        var id = await _sightingsStorage.Save(sightingDto);
                         if (sightingDto.ParseId == null)
                         {
                             sightingDto.ParseId = id;
@@ -268,7 +269,7 @@ namespace Kustobsar.Ap2.Data.Services
                         // Only save taxons not yet created to parse
                         if (taxonDto.ParseId == null)
                         {
-                            var id = _taxonStorage.Save(taxonDto).Result;
+                            var id = await _taxonStorage.Save(taxonDto);
                             taxonDto.ParseId = id;
                             session.Update(taxonDto);
                         }

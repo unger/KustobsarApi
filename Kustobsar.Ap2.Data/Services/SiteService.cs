@@ -1,4 +1,5 @@
-﻿using Artportalen.Response.Web;
+﻿using System.Threading.Tasks;
+using Artportalen.Response.Web;
 using Kustobsar.Ap2.Data.ParseData.Storage;
 using SafeMapper;
 
@@ -44,7 +45,7 @@ namespace Kustobsar.Ap2.Data.Services
             }
         }
 
-        public void StoreSites(IEnumerable<SiteResponse> sites)
+        public async Task StoreSites(IEnumerable<SiteResponse> sites)
         {
             var updatedSiteIds = new HashSet<long>();
             var siteDtos = new Dictionary<long, SiteDto>();
@@ -130,7 +131,7 @@ namespace Kustobsar.Ap2.Data.Services
                     var siteDto = siteDtos[key];
                     try
                     {
-                        var id = _siteStorage.Save(siteDto).Result;
+                        var id = await _siteStorage.Save(siteDto);
                     }
                     catch (Exception e)
                     {
