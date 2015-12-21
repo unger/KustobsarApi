@@ -222,7 +222,7 @@ namespace Kustobsar.Ap2.Data.Services
 
                 session.Flush();
             }
-
+            
             using (var session = NHibernateConfiguration.GetSession())
             {
                 foreach (var key in siteDtos.Keys.ToArray())

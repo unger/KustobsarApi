@@ -56,7 +56,19 @@ namespace Kustobsar.Ap2.Data.ParseData.Storage
                 Comment = sighting.PublicComment
             };
 
-            await parseSighting.SaveAsync();
+            await parseSighting.SaveAsync().ContinueWith(t =>
+            {
+                if (t.IsFaulted)
+                {
+                    if (t.Exception != null)
+                    {
+                        t.Exception.Handle(ex =>
+                        {
+                            return true;
+                        });
+                    }
+                }
+            });
 
             return parseSighting.ObjectId;
         }

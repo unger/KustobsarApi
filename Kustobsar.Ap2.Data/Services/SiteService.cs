@@ -83,9 +83,9 @@ namespace Kustobsar.Ap2.Data.Services
                     }
                     else
                     {
-                        if (!string.IsNullOrEmpty(siteDto.ParseId))
+                        if (!string.IsNullOrEmpty(site.ParseId))
                         {
-                            updatedSiteIds.Add(siteDto.SiteId);
+                            updatedSiteIds.Add(site.SiteId);
                         }
 
                         if (!string.IsNullOrEmpty(siteDto.SiteName) && site.SiteName != siteDto.SiteName)
