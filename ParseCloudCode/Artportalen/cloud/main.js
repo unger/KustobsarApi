@@ -1,3 +1,129 @@
+Parse.Cloud.define("testDate", function(request, response) {
+
+	var now = new Date();
+	var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	var yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	yesterday.setDate(today.getDate() - 1);
+  
+	var fromDate;
+	var toDate;
+	
+	if (request.params.date == "today") {
+		fromDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+		toDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+		toDate.setDate(fromDate.getDate() + 1);
+	} else if (request.params.date == "yesterday") {
+		fromDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+		toDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+		toDate.setDate(fromDate.getDate() + 1);
+	} else if (request.params.date == "older") {
+		toDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+		fromDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+		fromDate.setDate(toDate.getDate() - 14);
+	} else {
+		fromDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+		fromDate.setDate(fromDate.getDate() - 14);
+		toDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+		toDate.setDate(toDate.getDate() + 1);
+	}
+
+	response.success({
+		"fromDate" : fromDate,
+		"toDate" : toDate
+	});
+});
+
+
+Parse.Cloud.define("search", function(request, response) {
+
+	var now = new Date();
+	var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	var yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	yesterday.setDate(today.getDate() - 1);
+  
+	var fromDate;
+	var toDate;
+	var dateField = "endDate";
+	
+	var page = 1;
+	var pageSize = 100;
+	if (request.params.page != undefined && !isNaN(request.params.page) && request.params.page > 0) {
+		page = Math.floor(request.params.page);
+	}
+	if (request.params.pageSize != undefined && !isNaN(request.params.pageSize) && request.params.pageSize <= 100 && request.params.pageSize > 0) {
+		pageSize = Math.floor(request.params.pageSize);
+	}
+
+	if (request.params.date == "today") {
+		fromDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+		toDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+		toDate.setDate(fromDate.getDate() + 1);
+	} else if (request.params.date == "yesterday") {
+		fromDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+		toDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+		toDate.setDate(fromDate.getDate() + 1);
+	} else if (request.params.date == "older") {
+		toDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+		fromDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+		fromDate.setDate(toDate.getDate() - 14);
+	} else {
+		fromDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+		fromDate.setDate(fromDate.getDate() - 14);
+		toDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+		toDate.setDate(toDate.getDate() + 1);
+		//dateField = "createdAt";
+	}
+	
+	var taxons = request.params.taxons;
+	var kommuner = request.params.kommuner;
+	var landskap = request.params.landskap;
+	var prefix = request.params.prefix;
+	var latitude = request.params.latitude;
+	var longitude = request.params.longitude;	
+		
+	var query = new Parse.Query("Sighting");
+
+	if (fromDate && toDate) {
+		query.greaterThanOrEqualTo(dateField, fromDate);
+		query.lessThan(dateField, toDate);
+	}
+
+	if (latitude && longitude) {
+		var point = new Parse.GeoPoint({latitude: latitude, longitude: longitude});
+		query.near("location", point);
+	} else {
+		query.descending("sightingId");
+	}
+	
+	if (taxons) {
+		query.containedIn("taxonName", taxons);
+	}
+	if (kommuner) {
+		query.containedIn("kommun", kommuner);
+	}
+	if (landskap) {
+		query.containedIn("landskap", landskap);
+	}
+	if (prefix && prefix != 9) {
+		query.lessThanOrEqualTo("taxonPrefix", prefix);
+	}
+	
+	if (page > 1) {
+		query.skip((page - 1) * pageSize);
+	}
+	query.limit(pageSize);
+	
+	query.find({
+		success: function(results) {
+			response.success(results);
+		},
+		error: function(error) {
+			response.error("search failed: " + error.code);
+		}
+	});
+
+});
+
 
 Parse.Cloud.define("match", function(request, response) {
 
@@ -67,7 +193,7 @@ Parse.Cloud.define("match", function(request, response) {
 					query.containedIn("landskap", rule.get("landskap"));
 					valid = true;
 				}
-				if (rule.get("prefix")) {
+				if (rule.get("prefix") && rule.get("prefix") != 9) {
 					query.lessThanOrEqualTo("taxonPrefix", rule.get("prefix"));
 					valid = true;
 				}
@@ -357,9 +483,6 @@ Parse.Cloud.afterSave("Sighting", function(request, response) {
 				console.log("matching failed: " + error);
 			}
 		});
-
-
-		
 	  },
 	  error: function(user, error) {
 		console.log("error fetched: " + error);
@@ -438,6 +561,34 @@ Parse.Cloud.define("installations", function(request, response) {
 			response.error("error getting sessions " + error);
 		}
 	});
-	
-	
+});
+
+
+Parse.Cloud.job("cleanUpOldSightings", function(request, status) {
+	Parse.Cloud.useMasterKey();
+	var counter = 0;
+
+	var now = new Date();
+	var date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	date.setDate(date.getDate() - 20);
+
+	var query = new Parse.Query("Sighting");
+	query.lessThan("endDate", date);
+    
+	status.message("Removing old sightings before: " + date);
+		
+	query.each(function(sighting) {
+		if (counter % 100 === 0) {
+			// Set the  job's progress status
+			status.message(counter + " sightings processed.");
+		}
+		counter += 1;
+		return sighting.destroy();
+	}).then(function() {
+		// Set the job's success status
+		status.success(counter + " sigtings removed.");
+	}, function(error) {
+		// Set the job's error status
+		status.error("Uh oh, something went wrong.");
+	});
 });
