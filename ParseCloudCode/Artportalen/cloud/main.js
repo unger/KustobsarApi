@@ -568,13 +568,13 @@ Parse.Cloud.job("cleanUpOldSightings", function(request, status) {
 	Parse.Cloud.useMasterKey();
 	var counter = 0;
 
-	var now = new Date();
-	var date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	var date = new Date();
 	date.setDate(date.getDate() - 20);
 
 	var query = new Parse.Query("Sighting");
-	query.lessThan("endDate", date);
+	query.lessThan("createdAt", date);
     
+	console.log("Removing old sightings before: " + date);
 	status.message("Removing old sightings before: " + date);
 		
 	query.each(function(sighting) {
