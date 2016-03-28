@@ -53,7 +53,25 @@ namespace Kustobsar.Ap2.Data.Services
             var nextDate = date.AddDays(1);
             using (var session = NHibernateConfiguration.GetSession())
             {
-                return session.Query<SightingDto>().Where(x => x.StartDate >= date && x.EndDate < nextDate).ToArray();
+                return session.Query<SightingDto>()
+                        .Fetch(x => x.Taxon)
+                        .Fetch(x => x.Site)
+                        .Where(x => x.StartDate >= date && x.EndDate < nextDate)
+                        .ToArray();
+            }
+        }
+
+        public IEnumerable<SightingDto> GetWestCoastSightings(DateTime date)
+        {
+            var nextDate = date.AddDays(1);
+            using (var session = NHibernateConfiguration.GetSession())
+            {
+                return session.Query<SightingDto>()
+                        .Fetch(x => x.Taxon)
+                        .Fetch(x => x.Site)
+                        .Where(x => x.StartDate >= date && x.EndDate < nextDate)
+                        .Where(x => x.Site.Landskap == "Halland" || x.Site.Landskap == "Bohuslän" || x.Site.Landskap == "Västergötland")
+                        .ToArray();
             }
         }
 
