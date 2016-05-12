@@ -3,8 +3,11 @@
     "Artportalen": {
       "applicationId": "iJ02ATq66kFdAwQDdTYBt99OeIeOOKMire3Kd8UK"
     },
+    "ArtportalenBirds": {
+      "applicationId": "3G5jgoiwwylOl5IrzEOYC5dPEUULw5hGZbYzFm9e"
+    },
     "_default": {
-      "link": "Artportalen"
+      "link": "ArtportalenBirds"
     }
   }
 }
