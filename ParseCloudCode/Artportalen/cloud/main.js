@@ -224,7 +224,8 @@ Parse.Cloud.define("match", function(request, response) {
 						response.success(results);
 					},
 					error: function(error) {
-						response.error("matching failed: " + error);
+						console.log("matching failed");
+						response.error(error);
 					}
 				});
 				
@@ -573,6 +574,7 @@ Parse.Cloud.job("cleanUpOldSightings", function(request, status) {
 
 	var query = new Parse.Query("Sighting");
 	query.lessThan("createdAt", date);
+	query.doesNotExist("user");
     
 	console.log("Removing old sightings before: " + date);
 	status.message("Removing old sightings before: " + date);
