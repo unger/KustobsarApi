@@ -71,7 +71,7 @@ namespace Kustobsar.Ap2.Api.Controllers
                 date = DateTime.Today;
             }
 
-            var sightings = this.sightingService.GetSightings(date);
+            var sightings = this.sightingService.GetWestCoastSightings(date);
 
             var kustobsarSightings = sightings
                          .Where(s => s.Taxon.TaxonId != 0)
@@ -81,8 +81,6 @@ namespace Kustobsar.Ap2.Api.Controllers
             kustobsarSightings = int.TryParse(rrkkod, out kod)
                                      ? kustobsarSightings.Where(k => k.RrkKod == kod)
                                      : kustobsarSightings.Where(k => k.RrkKod != 0);
-
-            
 
             var orderedSightings = this.OrderSightings(kustobsarSightings, rrksort, sort, sortorder).ToList();
 
